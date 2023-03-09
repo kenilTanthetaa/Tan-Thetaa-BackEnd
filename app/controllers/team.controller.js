@@ -86,7 +86,7 @@ async function editTeamMember(req, res) {
         if (linkedin || linkedin == "") {
             team.linkedin = linkedin
         }
-        if (gmail && team.gmail) {git 
+        if (gmail && team.gmail) {
             team.gmail = gmail
         }
         if (twitter || twitter == "") {
