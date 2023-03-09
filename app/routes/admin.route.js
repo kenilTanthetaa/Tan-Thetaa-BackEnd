@@ -83,7 +83,6 @@ router.get("/deleteTeamMember/:id", /*authAdmin,*/ teamController.deleteTeamMemb
 
 router.get("/viewTeamMember/:id", teamController.viewTeamMemberById)
 router.get("/viewTeamMember", teamController.viewTeamMember)
-// router.post("/viewTeamMemberCategory/:category", teamController.viewTeamMemberCategory)
 router.post("/viewTeamMemberCategory", teamController.viewTeamMemberCategory)
 
 

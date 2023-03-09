@@ -66,7 +66,7 @@ async function editTeamMember(req, res) {
     try {
 
         let { category, name, position, about, linkedin, gmail, twitter } = req.body
-        console.log("------------------>>>>>>", linkedin, "----------------", twitter) ;
+        console.log("------------------>>>>>>", linkedin, "----------------", twitter);
 
         let team = await Team.findById({ _id: req.params.id })
         if (!team) return res.status(HTTP.SUCCESS).send({ 'status': false, 'code': HTTP.NOT_FOUND, 'message': 'Team data does not exist.', data: {} })
@@ -93,7 +93,7 @@ async function editTeamMember(req, res) {
             team.twitter = twitter
         }
 
-        console.log("----------------AFTER-------------------", team.linkedin, "----------", team.twitter) 
+        console.log("----------------AFTER-------------------", team.linkedin, "----------", team.twitter)
 
 
         let profileImg, editedImg
@@ -217,22 +217,6 @@ async function viewTeamMember(req, res) {
     }
 }
 
-// async function viewTeamMemberCategory(req, res) {
-//     try {
-//         const data = await Team.find({ category: req.params.category })
-//         console.log(data)
-
-//         if (!data) return res.status(HTTP.SUCCESS).send({ "status": false, 'code': HTTP.BAD_REQUEST, "message": "Something went wrong while fetching data.", data: {} })
-
-//         return res.status(HTTP.SUCCESS).send({ 'status': true, 'message': "team data.", data })
-
-//     } catch (error) {
-//         console.log(e)
-//         res.status(401).json({ 'status': "error" })
-//         return res.status(HTTP.SUCCESS).send({ "status": false, 'code': HTTP.INTERNAL_SERVER_ERROR, "message": "Something went wrong!", data: {} })
-//     }
-// }
-
 async function viewTeamMemberCategory(req, res) {
     try {
         var cat = req.query.category
@@ -243,7 +227,7 @@ async function viewTeamMemberCategory(req, res) {
         if (cat == "all") {
             const data = await Team.find({})
             console.log(data);
-            
+
             return res.status(HTTP.SUCCESS).send({ 'status': true, 'message': "team data.", data })
         }
 
@@ -252,9 +236,8 @@ async function viewTeamMemberCategory(req, res) {
         return res.status(HTTP.SUCCESS).send({ 'status': true, 'message': "team data.", data })
 
     } catch (error) {
-        // console.log(e)
-        res.status(401).json({ 'status': "error" })
-        // return res.status(HTTP.SUCCESS).send({ "status": false, 'code': HTTP.INTERNAL_SERVER_ERROR, "message": "Something went wrong!", data: {} })
+        console.log(e)
+        return res.status(HTTP.SUCCESS).send({ "status": false, 'code': HTTP.INTERNAL_SERVER_ERROR, "message": "Something went wrong!", data: {} })
     }
 }
 
