@@ -34,7 +34,11 @@ const teamSchema = new mongoose.Schema({
   status: {
     type: Boolean,
     default: true
+  },
+  number:{
+    type: Number
   }
+
 }, { timestamps: true, versionKey: false });
 
 const team = new mongoose.model("Team", teamSchema);

@@ -2,9 +2,7 @@ const Team = require("../models/team.model")
 const HTTP = require("../../constants/responseCode.constant");
 const upload = require("../middlewares/teamUpload");
 const { fs } = require("file-system");
-const { log } = require("handlebars");
-
-// const cat_model = require('../models/addMemberTags')
+const team = require("../models/team.model");
 
 async function addTeamMember(req, res) {
     try {
@@ -15,12 +13,6 @@ async function addTeamMember(req, res) {
         // if(!name || !position || !about || !linkedin || !gmail || !twitter || !req.file) return res.status(HTTP.SUCCESS).send({ 'status': false, 'message': "All fields are required!" })
 
         // console.log("🚀 ~ file: team.controller.js:15 ~ addTeamMember ~ req.file.filename:", req.file)
-
-
-        // var arr =req.files.editedImg.find(i => i.fieldname)
-        // console.log(arr.fieldname)
-        // console.log(req.files)
-
         let profileImg, editedImg
 
 
@@ -34,20 +26,19 @@ async function addTeamMember(req, res) {
             for (const data of req.files.editedImg) {
                 editedImg = "uploads/team" + data.filename
             }
-
         }
 
+        var find = await Team.count({})
+        var number = find + 2
+        // console.log(num)
 
 
         // if(name) 
 
-        const data = await Team({ category, name, position, about, linkedin, gmail, twitter, profileImg, editedImg }).save()
-        if (!data) return res.status(HTTP.SUCCESS).send({ "status": false, 'code': HTTP.BAD_REQUEST, "message": "Something went wrong while adding data.", data: {} })
-        console.log(data)
+        const data = await Team({ number, category, name, position, about, linkedin, gmail, twitter, profileImg, editedImg }).save()
+        if (!data) return res.status(HTTP.SUCCESS).send({ "status": false, 'code': HTTP.BAD_REQUEST, "message": "Something went wrong while adding data.", data: {}, })
 
         return res.status(HTTP.SUCCESS).send({ 'status': true, 'message': "Added team data successfully.", data })
-
-
 
     } catch (e) {
         console.log(e)
@@ -55,18 +46,10 @@ async function addTeamMember(req, res) {
     }
 }
 
-
-async function addcat(req, res) {
-    var category = await Team.find({})
-    console.log(category)
-}
-
-
 async function editTeamMember(req, res) {
     try {
 
         let { category, name, position, about, linkedin, gmail, twitter } = req.body
-        console.log("------------------>>>>>>", linkedin, "----------------", twitter);
 
         let team = await Team.findById({ _id: req.params.id })
         if (!team) return res.status(HTTP.SUCCESS).send({ 'status': false, 'code': HTTP.NOT_FOUND, 'message': 'Team data does not exist.', data: {} })
@@ -92,10 +75,6 @@ async function editTeamMember(req, res) {
         if (twitter || twitter == "") {
             team.twitter = twitter
         }
-
-        console.log("----------------AFTER-------------------", team.linkedin, "----------", team.twitter)
-
-
         let profileImg, editedImg
         // if(req.file != undefined){
         //     profileImg = "uploads/team" + req.file.filename
@@ -165,14 +144,13 @@ async function deleteTeamMember(req, res) {
         const data = await Team.findOne({ _id: req.params.id })
         if (data.profileImg) {
             let filename_ = "./" + data.profileImg
-            // console.log(filename_)
             fs.unlinkSync(filename_, (err) => {
                 if (err) console.log(err);
             })
         }
 
-        // const updateData = await Team.findOneAndUpdate({ _id: req.params.id }, { status: false }, { new: true })
-        const updateData = await Team.findOneAndRemove({ _id: req.params.id })
+        const updateData = await Team.findOneAndUpdate({ _id: req.params.id }, { status: false }, { new: true })
+        // const updateData = await Team.findOneAndRemove({ _id: req.params.id })
         if (!updateData) return res.status(HTTP.SUCCESS).send({ 'status': true, 'message': "Unable to delete data." })
 
         return res.status(HTTP.SUCCESS).send({ 'status': true, 'message': "Deleted Team Data.", 'data': {} })
@@ -187,8 +165,6 @@ async function viewTeamMemberById(req, res) {
     try {
 
         const data = await Team.findOne({ _id: req.params.id })
-        console.log(data);
-
         if (!data) return res.status(HTTP.SUCCESS).send({ "status": false, 'code': HTTP.BAD_REQUEST, "message": "Something went wrong while fetching data.", data: {} })
 
         return res.status(HTTP.SUCCESS).send({ 'status': true, 'message': "team data.", data })
@@ -203,8 +179,8 @@ async function viewTeamMemberById(req, res) {
 async function viewTeamMember(req, res) {
     try {
 
-        const data = await Team.find({ status: true })
-        // console.log(data);
+        const data = await Team.find({ status: true }).sort({number: 1})
+        // console.log(data)
 
         if (!data) return res.status(HTTP.SUCCESS).send({ "status": false, 'code': HTTP.BAD_REQUEST, "message": "Something went wrong while fetching data.", data: {} })
 
@@ -217,6 +193,7 @@ async function viewTeamMember(req, res) {
     }
 }
 
+// ----------------------------------------------kenil's code---------------------------------------------------
 async function viewTeamMemberCategory(req, res) {
     try {
         var cat = req.query.category
@@ -241,13 +218,59 @@ async function viewTeamMemberCategory(req, res) {
     }
 }
 
+async function reorderTeamMember(req, res) {
+
+    try {
+
+        // var result = req.body
+        var { AllTeamMemberData } = req.body
+        console.log("reorderTeamMember--> ",AllTeamMemberData );
+        
+        for(const data of AllTeamMemberData){
+            // console.log(data, "-----< in loop");
+            console.log(data._id, "-----< in loop");
+            console.log(data.number, "-----< in loop");
+    
+            await Team.findByIdAndUpdate({ _id: data._id }, { number:data.number }, { new:true })
+    
+        }
+    
+        return res.status(HTTP.SUCCESS).send({ 'status': true, 'message': "successfully reordered data.", })
+
+        
+    } catch (e) {
+        console.log(e)
+        return res.status(HTTP.SUCCESS).send({ "status": false, 'code': HTTP.INTERNAL_SERVER_ERROR, "message": "Something went wrong!", data: {} })
+    }
+
+
+    // var data;
+    // // for (let data of result) {
+    //     // console.log(data._id)
+    // // console.log("unsort data", data.number)}
+    // // console.log("===============================> RE ORDER",result);
+    
+    // for (let i = 0; i < result.length; i++) {
+    //     // console.log({_id:result[i]._id})
+    //     data = await Team.findOneAndUpdate({ _id: result[i]._id }, { number: i }, { new: true })
+    //     // console.log(data)
+    // }
+    // // console.log("===============================>",data);
+    // // if (!data) return res.status(HTTP.SUCCESS).send({ "status": false, 'code': HTTP.BAD_REQUEST, "message": "Something went wrong while fetching data.", data: {} })
+    
+    // return res.status(HTTP.SUCCESS).send({ 'status': true, 'message': "successfully reordered data.", })
+
+}
+
+
+
 module.exports = {
 
     addTeamMember,
-    addcat,
     editTeamMember,
     deleteTeamMember,
     viewTeamMember,
     viewTeamMemberById,
     viewTeamMemberCategory,
+    reorderTeamMember
 }

@@ -80,12 +80,11 @@ const blog = require('../models/blog.model');
 router.post("/addTeamMember", /*authAdmin,*/ uploadTeam.fields([{ name: 'profileImg', maxCount: 1 }, { name: 'editedImg', maxCount: 1 }]), teamController.addTeamMember)
 router.post("/editTeamMember/:id", /*authAdmin,*/ uploadTeam.fields([{ name: 'profileImg', maxCount: 1 }, { name: 'editedImg', maxCount: 1 }]), teamController.editTeamMember)
 router.get("/deleteTeamMember/:id", /*authAdmin,*/ teamController.deleteTeamMember)
-
 router.get("/viewTeamMember/:id", teamController.viewTeamMemberById)
 router.get("/viewTeamMember", teamController.viewTeamMember)
+
 router.post("/viewTeamMemberCategory", teamController.viewTeamMemberCategory)
-
-
+router.post("/reorderTeamMember", teamController.reorderTeamMember)
 
 // --------------------------------------CONTACT US---------------------------------------------
 router.post("/contactUs", uploadContact, adminController.contactUs)

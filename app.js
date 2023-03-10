@@ -38,6 +38,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Database connection
 require('./config/mongodb')
+
 //passport config
 app.use(passport.initialize())
 require('./config/passport')
